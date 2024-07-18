@@ -1379,3 +1379,224 @@ C:\Users\mwika\Desktop\crowwriter\server\controllers\authController.js:152:21
 Can't reach database server at `roundhouse.proxy.rlwy.net:54383`
 
 Please make sure your database server is running at `roundhouse.proxy.rlwy.net:54383`.	POST	/auth/logout	http://localhost:5173
+20240716	16:19:45	9c31afe9-28d0-4d3a-93e3-040521f6432b	Error: Not allowed by CORS	POST	/auth/register	http://localhost:3001
+20240716	17:11:08	ff6ea069-baee-42d3-b3fb-1e4da3be2ae2	Error: Not allowed by CORS	POST	/api/auth/register	http://localhost:3001
+20240716	20:43:05	0e05d606-ef70-4296-858d-fe68b232a41c	Error: Not allowed by CORS	DELETE	/api/orders/delete-assignment/0	http://localhost:3001
+20240716	20:43:23	84c259f7-830f-4377-9cfb-36497da23b78	Error: Not allowed by CORS	PATCH	/api/orders/reassign/99	http://localhost:3001
+20240718	10:55:19	fc05c531-8de9-4fa5-b92c-b8a42fa531f7	Error: Not allowed by CORS	POST	/api/bids/create	http://localhost:3001
+20240718	16:56:48	5e177c4d-ba70-4556-ae1e-3d96274464d0	PrismaClientValidationError: 
+Invalid `prisma.user.create()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/authController.js:44:34
+
+  41 const salt = await bcrypt.genSalt(10);
+  42 const hashedPassword = await bcrypt.hash(password, salt);
+  43 
+→ 44 const user = await prisma.user.create({
+       data: {
+         fname: "kamau",
+         lname: "mugo",
+         email: "kamau@test.com",
+         password: "$2b$10$SjFXdNkwHP..D8g2cTWv2.1fkRUtqdR40ea99rThyxFGZ88SrPZ/C",
+         role: "freelancer",
+               ~~~~~~~~~~~~
+         profilePic: undefined,
+         active: undefined
+       }
+     })
+
+Invalid value for argument `role`. Expected Role.	POST	/auth/register	http://localhost:5173
+20240718	17:37:52	ba22ec44-3fe6-4db3-9276-dac616f644ad	PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.	PATCH	/users/profile/[object%20Object]	http://localhost:5173
+20240718	17:48:53	49dad9fc-15e5-40a7-a902-f932e239cfbd	PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.	PATCH	/users/profile/[object%20Object]	http://localhost:5173
+20240718	18:48:05	345c1ffe-b920-4f1e-a531-7186be24320d	PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.	PATCH	/users/profile/[object%20Object]	http://localhost:5173
+20240718	19:08:46	a7a56e34-aff4-4e8c-8f2c-29dd8629acfc	PrismaClientValidationError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update({
+        where: {
+          id: "undefined"
+        },
+        data: {
+          fname: undefined,
+          lname: undefined,
+          role: "",
+                ~~
+          profilePic: undefined,
+          country: "Kenya",
+          city: "Machakos",
+          altEmail: "jklkjkl",
+          phone: "0715565383",
+          altPhone: undefined,
+          highestDegree: "Bachelor's",
+          citationStyles: [
+            "APA",
+            "Chicago/Turabian"
+          ],
+          languages: [
+            "German"
+          ],
+          disciplines: [
+            "Anthropology",
+            "Business Studies"
+          ],
+          specialization: [
+            "Admission papers"
+          ],
+          additionalSoftware: [
+            "Java programming"
+          ],
+          aboutMe: "dust"
+        }
+      })
+
+Invalid value for argument `role`. Expected Role.	PATCH	/users/profile/undefined	http://localhost:5173
+20240718	19:12:37	2c3a179e-9783-46c9-a840-3f48218f7c2c	PrismaClientValidationError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update({
+        where: {
+          id: "undefined"
+        },
+        data: {
+          fname: undefined,
+          lname: undefined,
+          role: "",
+                ~~
+          profilePic: undefined,
+          country: "Kenya",
+          city: "Machakos",
+          altEmail: undefined,
+          phone: "0715565383",
+          altPhone: undefined,
+          highestDegree: "PhD",
+          citationStyles: [
+            "Chicago/Turabian"
+          ],
+          languages: [
+            "Spanish"
+          ],
+          disciplines: [
+            "Mathematics"
+          ],
+          specialization: undefined,
+          additionalSoftware: undefined,
+          aboutMe: "homework"
+        }
+      })
+
+Invalid value for argument `role`. Expected Role.	PATCH	/users/profile/undefined	http://localhost:5173
+20240718	19:19:27	eb335121-acee-4a56-a2fa-578491fd14c2	PrismaClientValidationError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update({
+        where: {
+          id: "32c7d16a-c663-424c-b23c-c8b89fe7c04a"
+        },
+        data: {
+          fname: undefined,
+          lname: undefined,
+          role: "",
+                ~~
+          profilePic: undefined,
+          country: "Kenya",
+          city: "Machakos",
+          altEmail: undefined,
+          phone: "0715565383",
+          altPhone: undefined,
+          highestDegree: "PhD",
+          citationStyles: [
+            "Harvard"
+          ],
+          languages: [
+            "French"
+          ],
+          disciplines: [
+            "Anthropology"
+          ],
+          specialization: undefined,
+          additionalSoftware: [
+            "C++",
+            "Java programming"
+          ],
+          aboutMe: "ma"
+        }
+      })
+
+Invalid value for argument `role`. Expected Role.	PATCH	/users/profile/32c7d16a-c663-424c-b23c-c8b89fe7c04a	http://localhost:5173
+20240718	19:26:54	e466853f-3348-4c17-a239-c6b89be420cd	PrismaClientValidationError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:357:41
+
+  354   aboutMe,
+  355 } = req.body;
+  356 
+→ 357 const updatedUser = await prisma.user.update({
+        where: {
+          id: "d6a163a2-8c75-475a-b972-bfe7e9932424"
+        },
+        data: {
+          fname: undefined,
+          lname: undefined,
+          role: "",
+                ~~
+          profilePic: undefined,
+          country: "Kenya",
+          city: "Machakos",
+          altEmail: undefined,
+          phone: "0715565383",
+          altPhone: undefined,
+          highestDegree: "PhD",
+          citationStyles: [
+            "Harvard"
+          ],
+          languages: [
+            "French"
+          ],
+          disciplines: [
+            "Business Studies",
+            "Criminal law"
+          ],
+          specialization: [
+            "Admission papers"
+          ],
+          additionalSoftware: undefined,
+          aboutMe: "msdk"
+        }
+      })
+
+Invalid value for argument `role`. Expected Role.	PATCH	/users/profile/d6a163a2-8c75-475a-b972-bfe7e9932424	http://localhost:5173

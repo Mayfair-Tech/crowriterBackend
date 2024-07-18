@@ -4,7 +4,9 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["relationJoins", "driverAdapters", "metrics"]
+ 
 }
+
 
 datasource db {
   provider = "postgresql"

@@ -5,6 +5,29 @@ const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         fname:
+ *           type: string
+ *         lname:
+ *           type: string
+ *         email:
+ *           type: string
+ *         role:
+ *           type: string
+ *         profilePic:
+ *           type: string
+ *         active:
+ *           type: boolean
+ */
+
 const registerUser = asyncHandler(async (req, res) => {
   const { fname, lname, email, password, role, profilePic, active } = req.body;
   if (!fname || !lname || !email || !password) {
@@ -31,14 +54,17 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json({ message: `User ${user.fname} created successfully`, userId: user.id });
+    res.status(201).json({
+      message: `User ${user.fname} created successfully`,
+      userId: user.id,
+    });
   } else {
     res.status(400).json({ message: "Invalid user data" });
   }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
- try {
+  try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
 
@@ -46,25 +72,39 @@ const loginUser = asyncHandler(async (req, res) => {
     //   return res.status(401).json({ message: "User not found" });
     // }
     const isMatch = await bcrypt.compare(password, user.password);
-  
+
     if (user && isMatch) {
       const accessToken = jwt.sign(
-        { user: { id: user.id, email: user.email,
-            fname: user.fname, lname: user.lname,
-          role: user.role,
-          profilePic: user.profilePic,
-         } },
-        
+        {
+          user: {
+            id: user.id,
+            email: user.email,
+            fname: user.fname,
+            lname: user.lname,
+            role: user.role,
+            profilePic: user.profilePic,
+          },
+        },
+
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "15m" }
       );
-    
+
       const refreshToken = jwt.sign(
-        { user: { id: user.id, email: user.email, fname: user.fname, lname: user.lname, role: user.role, profilePic: user.profilePic } },
+        {
+          user: {
+            id: user.id,
+            email: user.email,
+            fname: user.fname,
+            lname: user.lname,
+            role: user.role,
+            profilePic: user.profilePic,
+          },
+        },
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: "7d" }
       );
-  
+
       await prisma.user.update({
         where: { id: user.id },
         data: {
@@ -72,7 +112,7 @@ const loginUser = asyncHandler(async (req, res) => {
           refreshTokenExp: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
       });
-  
+
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
@@ -83,12 +123,10 @@ const loginUser = asyncHandler(async (req, res) => {
     } else {
       res.status(401).json({ message: "Email or password is not valid" });
     }
-    
- } catch (error) {
+  } catch (error) {
     res.status(500).json({ message: error.message });
     console.log(error);
-    
- }
+  }
 });
 
 const refreshToken = asyncHandler(async (req, res) => {
@@ -167,6 +205,5 @@ const logOutUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "Logout successful" });
 });
-
 
 module.exports = { registerUser, loginUser, refreshToken, logOutUser };
