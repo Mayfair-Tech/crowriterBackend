@@ -336,8 +336,8 @@ const getFreelancerDetails = asyncHandler(async (req, res) => {
 const editProfile = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const {
-    fname,
-    lname,
+    // fname,
+    // lname,
     role,
     profilePic,
     country,
@@ -357,8 +357,8 @@ const editProfile = asyncHandler(async (req, res) => {
   const updatedUser = await prisma.user.update({
     where: { id },
     data: {
-      fname,
-      lname,
+      // fname,
+      // lname,
       role,
       profilePic,
       country,
@@ -367,11 +367,11 @@ const editProfile = asyncHandler(async (req, res) => {
       phone,
       altPhone,
       highestDegree,
-      citationStyles,
-      languages,
-      disciplines,
-      specialization,
-      additionalSoftware,
+      citationStyles: citationStyles ? citationStyles : [],
+      languages: languages ? languages : [],
+      disciplines: disciplines ? disciplines : [],
+      specialization: specialization ? specialization : [],
+      additionalSoftware: additionalSoftware ? additionalSoftware : [],
       aboutMe,
     },
   });
