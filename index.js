@@ -6,7 +6,7 @@ const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const setupSwagger = require("./swagger");
-
+//git testing
 const corsOptions = require("./config/corsOptions");
 const { PrismaClient } = require("@prisma/client");
 
