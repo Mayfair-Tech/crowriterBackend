@@ -2282,3 +2282,74 @@ Invalid `prisma.user.update()` invocation in
       })
 
 Argument `citationStyles`: Invalid value provided. Expected String, NullableStringFieldUpdateOperationsInput or Null, provided (String, String).	PATCH	/users/profile/b154e92d-5eaf-477b-8085-23b1f9db02fa	http://localhost:5173
+20240720	00:57:03	ed0da26f-d6d5-470b-b187-bc0b0117e104	PrismaClientKnownRequestError: 
+Invalid `prisma.user.update()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:358:41
+
+  355   aboutMe,
+  356 } = req.body;
+  357 
+→ 358 const updatedUser = await prisma.user.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.	PATCH	/users/profile/undefined	http://localhost:5173
+20240720	01:25:00	142031f7-bc53-4227-910d-23d8d678061b	PrismaClientValidationError: 
+Invalid `prisma.user.findMany()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/userContoller.js:409:51
+
+  406 });
+  407 
+  408 const getUnapprovedFreelancers = asyncHandler(async (req, res) => {
+→ 409   const unapprovedFreelancers = await prisma.user.findMany({
+          where: {
+            role: "FREELANCER",
+            status: "PENDING"
+          },
+          select: {
+        ?   id?: true,
+        ?   fname?: true,
+        ?   lname?: true,
+        ?   email?: true,
+        ?   password?: true,
+        ?   role?: true,
+        ?   profilePic?: true,
+        ?   refreshToken?: true,
+        ?   refreshTokenExp?: true,
+        ?   online?: true,
+        ?   active?: true,
+        ?   createdAt?: true,
+        ?   updatedAt?: true,
+        ?   status?: true,
+        ?   experience?: true,
+        ?   leadershipStyle?: true,
+        ?   teamSize?: true,
+        ?   achievements?: true,
+        ?   professionalDevelopment?: true,
+        ?   gender?: true,
+        ?   country?: true,
+        ?   city?: true,
+        ?   altEmail?: true,
+        ?   phone?: true,
+        ?   altPhone?: true,
+        ?   highestDegree?: true,
+        ?   citationStyles?: true,
+        ?   languages?: true,
+        ?   disciplines?: true,
+        ?   specialization?: true,
+        ?   additionalSoftware?: true,
+        ?   aboutMe?: true,
+        ?   orders?: true,
+        ?   bids?: true,
+        ?   assignments?: true,
+        ?   SubmittedJobs?: true,
+        ?   cancelledJobs?: true,
+        ?   invoices?: true,
+        ?   payments?: true,
+        ?   fines?: true,
+        ?   reviews?: true,
+        ?   reviewed?: true,
+        ?   notifications?: true,
+        ?   freelancerApplications?: true,
+        ?   _count?: true
+          }
+        })
+
+The `select` statement for type User needs at least one truthy value.	GET	/users/unapproved	undefined

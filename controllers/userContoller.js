@@ -338,6 +338,7 @@ const editProfile = asyncHandler(async (req, res) => {
   const {
     // fname,
     // lname,
+    status,
     role,
     profilePic,
     country,
@@ -359,6 +360,7 @@ const editProfile = asyncHandler(async (req, res) => {
     data: {
       // fname,
       // lname,
+      status,
       role,
       profilePic,
       country,
@@ -405,15 +407,46 @@ const getManagers = asyncHandler(async (req, res) => {
 
 const getUnapprovedFreelancers = asyncHandler(async (req, res) => {
   const unapprovedFreelancers = await prisma.user.findMany({
+    // where: {
+    //   role: "FREELANCER",
+    //   freelancerApplications: {
+    //     some: {
+    //       status: {
+    //         in: ["PENDING", "DECLINED"],
+    //       },
+    //     },
+    //   },
+    // },
+    // select: {
+    //   id: true,
+    //   fname: true,
+    //   lname: true,
+    //   email: true,
+    //   profilePic: true,
+    //   role: true,
+    //   active: true,
+    //   online: true,
+    //   country: true,
+    //   city: true,
+    //   disciplines: true,
+    //   languages: true,
+    //   specialization: true,
+    //   freelancerApplications: {
+    //     where: {
+    //       status: {
+    //         in: ["PENDING", "DECLINED"],
+    //       },
+    //     },
+    //     select: {
+    //       id: true,
+    //       status: true,
+    //       createdAt: true,
+    //     },
+    //   },
+    // },
     where: {
       role: "FREELANCER",
-      freelancerApplications: {
-        some: {
-          status: {
-            in: ["PENDING", "DECLINED"],
-          },
-        },
-      },
+      status: "PENDING",
     },
     select: {
       id: true,
@@ -426,21 +459,15 @@ const getUnapprovedFreelancers = asyncHandler(async (req, res) => {
       online: true,
       country: true,
       city: true,
-      disciplines: true,
+      phone: true,
+      altPhone: true,
+      highestDegree: true,
+      citationStyles: true,
       languages: true,
+      disciplines: true,
       specialization: true,
-      freelancerApplications: {
-        where: {
-          status: {
-            in: ["PENDING", "DECLINED"],
-          },
-        },
-        select: {
-          id: true,
-          status: true,
-          createdAt: true,
-        },
-      },
+      additionalSoftware: true,
+      aboutMe: true,
     },
   });
 
