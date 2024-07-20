@@ -4,7 +4,9 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["relationJoins", "driverAdapters", "metrics"]
+ 
 }
+
 
 datasource db {
   provider = "postgresql"
@@ -26,6 +28,7 @@ model User {
   active          Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  status          String    @default("PENDING")
 
   // Add manager-specific fields
   experience              String? // Years of experience
@@ -42,12 +45,13 @@ model User {
   phone              String? // Phone
   altPhone           String? // Alternative Phone
   highestDegree      String? // Highest Degree
-  citationStyles     String? // Citation Styles
-  languages          String? // Languages
-  disciplines        String? // Disciplines
-  specialization     String? // Specialization
-  additionalSoftware String? // Additional Software
+  citationStyles     String[] // Citation Styles
+  languages          String[] // Languages
+  disciplines        String[] // Disciplines
+  specialization     String[] // Specialization
+  additionalSoftware String[] // Additional Software
   aboutMe            String? // About Me
+ 
 
   orders        Order[] // Relation with the Order model
   bids          Bids[]

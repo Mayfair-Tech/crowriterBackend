@@ -1,5 +1,26 @@
 const asyncHandler = require("express-async-handler");
 const { PrismaClient, Prisma } = require("@prisma/client");
+const { Server } = require("socket.io");
+const express = require("express");
+const app = express();
+const http = require("http");
+const server = http.createServer(app);
+const io = new Server(server);
+
+// Set up Socket.IO connection
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  // Optionally handle disconnection
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
+
+// Function to emit notification
+const emitNotification = (notification) => {
+  io.emit("newNotification", notification);
+};
 
 const prisma = new PrismaClient();
 
@@ -7,7 +28,9 @@ const assignOrder = asyncHandler(async (req, res) => {
   const { orderId, freelancerId } = req.body;
 
   if (!orderId || !freelancerId) {
-    return res.status(400).json({ message: "Both orderId and freelancerId are required" });
+    return res
+      .status(400)
+      .json({ message: "Both orderId and freelancerId are required" });
   }
 
   try {
@@ -20,7 +43,9 @@ const assignOrder = asyncHandler(async (req, res) => {
     }
 
     if (order.freelancerId) {
-      return res.status(400).json({ message: "Order is already assigned to a user" });
+      return res
+        .status(400)
+        .json({ message: "Order is already assigned to a user" });
     }
 
     const freelancer = await prisma.user.findUnique({
@@ -223,7 +248,7 @@ const reassignOrder = asyncHandler(async (req, res) => {
       });
     }
 
-    await prisma.notification.create({
+    const newFreelancerNotification = await prisma.notification.create({
       data: {
         userId: newFreelancerId,
         title: "Order assigned",
@@ -232,6 +257,7 @@ const reassignOrder = asyncHandler(async (req, res) => {
         type: "ORDER",
       },
     });
+    emitNotification(newFreelancerNotification);
 
     res.status(200).json({ message: "Order reassigned successfully" });
   } catch (error) {
