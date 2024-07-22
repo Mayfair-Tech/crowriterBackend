@@ -66,11 +66,14 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("detos", email, password);
     const user = await prisma.user.findUnique({ where: { email } });
 
     // if (!user) {
     //   return res.status(401).json({ message: "User not found" });
     // }
+    console.log("testing");
+    console.log("user", email);
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (user && isMatch) {
