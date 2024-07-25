@@ -7,6 +7,7 @@ const {
   getManagers,
   getManagerDetails,
   getUnapprovedFreelancers,
+  approveFreelancer,
 } = require("../controllers/userContoller");
 
 /**
@@ -98,6 +99,42 @@ router.get("/unapproved", getUnapprovedFreelancers);
  *               $ref: '#/components/schemas/User'
  */
 router.patch("/profile/:id", editProfile); // Edit profile
+
+/**
+ * @swagger
+ * /users/approve/freelancer/{id}:
+ *   patch:
+ *     summary: Approve a freelancer
+ *     description: Approves a freelancer's profile by updating their status.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the freelancer.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Freelancer approved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Freelancer approved successfully.
+ *       400:
+ *         description: Invalid ID supplied.
+ *       404:
+ *         description: Freelancer not found.
+ *       500:
+ *         description: Server error.
+ */
+router.patch("/approve/freelancer/:id", approveFreelancer);
 
 /**
  * @swagger

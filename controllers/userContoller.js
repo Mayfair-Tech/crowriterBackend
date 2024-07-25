@@ -242,11 +242,12 @@ const getFreelancers = asyncHandler(async (req, res) => {
   const freelancers = await prisma.user.findMany({
     where: {
       role: "FREELANCER",
-      freelancerApplications: {
-        some: {
-          status: "APPROVED",
-        },
-      },
+      // freelancerApplications: {
+      //   some: {
+      //     status: "APPROVED",
+      //   },
+      // },
+      status: "ACTIVE",
     },
     select: {
       id: true,
@@ -501,6 +502,21 @@ const getManagerDetails = asyncHandler(async (req, res) => {
   res.json(manager);
 });
 
+const approveFreelancer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { status: "ACTIVE" },
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: "Unable to update status" });
+  }
+});
+
 module.exports = {
   getFreelancers,
   getFreelancerDetails,
@@ -508,4 +524,5 @@ module.exports = {
   getManagers,
   getManagerDetails,
   getUnapprovedFreelancers,
+  approveFreelancer,
 };

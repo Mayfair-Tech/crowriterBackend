@@ -1,27 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const { PrismaClient, Prisma } = require("@prisma/client");
-const { Server } = require("socket.io");
-const express = require("express");
-const app = express();
-const http = require("http");
-const server = http.createServer(app);
-const io = new Server(server);
 
-// Set up Socket.IO connection
-io.on("connection", (socket) => {
-  console.log("a user connected");
-
-  // Optionally handle disconnection
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
-
-// Function to emit notification
-const emitNotification = (notification) => {
-  io.emit("newNotification", notification);
+const emitNotification = (io, recipientId, notification) => {
+  io.to(recipientId).emit("newNotification", notification);
 };
-
 const prisma = new PrismaClient();
 
 const assignOrder = asyncHandler(async (req, res) => {
@@ -215,57 +197,69 @@ const extendDeadline = asyncHandler(async (req, res) => {
   }
 });
 
-const reassignOrder = asyncHandler(async (req, res) => {
-  const { orderId } = req.params;
-  const { newFreelancerId } = req.body;
-
-  try {
-    const currentOrder = await prisma.order.findUnique({
-      where: { id: orderId },
-      include: { freelancer: true },
-    });
-
-    if (!currentOrder) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    const oldFreelancerId = currentOrder.freelancerId;
-
-    const updatedOrder = await prisma.order.update({
-      where: { id: orderId },
-      data: { freelancerId: newFreelancerId },
-    });
-
-    if (oldFreelancerId) {
-      await prisma.notification.create({
-        data: {
-          userId: oldFreelancerId,
-          title: "Order reassigned",
-          message: "Your order has been reassigned.",
-          orderId: updatedOrder.id,
-          type: "ORDER",
-        },
+const reassignOrder = (io) =>
+  asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+    const { newFreelancerId } = req.body;
+    console.log("reassiggn hit", orderId, newFreelancerId);
+    try {
+      const currentOrder = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: { freelancer: true },
       });
+
+      if (!currentOrder) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const oldFreelancerId = currentOrder.freelancerId;
+
+      const updatedOrder = await prisma.order.update({
+        where: { id: orderId },
+        data: { freelancerId: newFreelancerId },
+      });
+
+      if (oldFreelancerId) {
+        console.log("old freelancer found", oldFreelancerId);
+        await prisma.notification.create({
+          data: {
+            userId: oldFreelancerId,
+            title: "Order reassigned",
+            message: `Your order id ${updatedOrder.id} has been reassigned.`,
+            orderId: updatedOrder.id,
+            type: "ORDER",
+            read: false, // Mark as unread initially
+          },
+        });
+        emitNotification(io, oldFreelancerId, {
+          title: "Order reassigned",
+          message: `Your order id ${updatedOrder.id} has been reassigned to someone else.`,
+        });
+      }
+
+      if (newFreelancerId) {
+        await prisma.notification.create({
+          data: {
+            userId: newFreelancerId,
+            title: "Order assigned",
+            message: "You have been assigned a new order",
+            orderId: updatedOrder.id,
+            type: "ORDER",
+            read: false, // Mark as unread initially
+          },
+        });
+        emitNotification(io, newFreelancerId, {
+          title: "Order assigned",
+          message: "You have been assigned a new order",
+        });
+      }
+
+      res.status(200).json({ message: "Order reassigned successfully" });
+    } catch (error) {
+      console.error("Error reassigning order:", error);
+      res.status(500).json({ message: "Server error" });
     }
-
-    const newFreelancerNotification = await prisma.notification.create({
-      data: {
-        userId: newFreelancerId,
-        title: "Order assigned",
-        message: "You have been assigned a new order",
-        orderId: updatedOrder.id,
-        type: "ORDER",
-      },
-    });
-    emitNotification(newFreelancerNotification);
-
-    res.status(200).json({ message: "Order reassigned successfully" });
-  } catch (error) {
-    console.error("Error reassigning order:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
+  });
 module.exports = {
   assignOrder,
   getAssignedOrders,
