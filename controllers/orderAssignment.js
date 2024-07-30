@@ -171,37 +171,45 @@ const getAssignedOrdersByFreelancer = asyncHandler(async (req, res) => {
   }
 });
 
-const extendDeadline = asyncHandler(async (req, res) => {
-  const { orderId } = req.params;
-  const { newDeadline, message } = req.body;
-  try {
-    const updatedOrder = await prisma.order.update({
-      where: { id: orderId },
-      data: { deadline: newDeadline },
-    });
+const extendDeadline = (io) =>
+  asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+    const { newDeadline, message } = req.body;
+    try {
+      const updatedOrder = await prisma.order.update({
+        where: { id: orderId },
+        data: { deadline: newDeadline },
+      });
 
-    await prisma.notification.create({
-      data: {
-        userId: updatedOrder.freelancerId,
+      await prisma.notification.create({
+        data: {
+          userId: updatedOrder.freelancerId,
+          title: "Deadline extended",
+          message: message,
+          orderId: updatedOrder.id,
+          type: "OTHER",
+          read: false, // Mark as unread initially
+        },
+      });
+
+      // Send a real-time notification
+      emitNotification(io, updatedOrder.freelancerId, {
         title: "Deadline extended",
         message: message,
-        orderId: updatedOrder.id,
-        type: "OTHER",
-      },
-    });
+      });
 
-    res.status(200).json({ message: "Deadline extended successfully" });
-  } catch (error) {
-    console.error("Error extending deadline:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+      res.status(200).json({ message: "Deadline extended successfully" });
+    } catch (error) {
+      console.error("Error extending deadline:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
 
 const reassignOrder = (io) =>
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
-    const { newFreelancerId } = req.body;
-    console.log("reassiggn hit", orderId, newFreelancerId);
+    const { newFreelancerId, deadline, instructions } = req.body;
+
     try {
       const currentOrder = await prisma.order.findUnique({
         where: { id: orderId },
@@ -213,14 +221,21 @@ const reassignOrder = (io) =>
       }
 
       const oldFreelancerId = currentOrder.freelancerId;
+      let updatedOrder; // Declare updatedOrder here
 
-      const updatedOrder = await prisma.order.update({
-        where: { id: orderId },
-        data: { freelancerId: newFreelancerId },
-      });
+      if (newFreelancerId !== "") {
+        updatedOrder = await prisma.order.update({
+          where: { id: orderId },
+          data: { freelancerId: newFreelancerId, deadline, instructions },
+        });
+      } else {
+        updatedOrder = await prisma.order.update({
+          where: { id: orderId },
+          data: { deadline, instructions },
+        });
+      }
 
       if (oldFreelancerId) {
-        console.log("old freelancer found", oldFreelancerId);
         await prisma.notification.create({
           data: {
             userId: oldFreelancerId,
@@ -237,7 +252,7 @@ const reassignOrder = (io) =>
         });
       }
 
-      if (newFreelancerId) {
+      if (newFreelancerId !== "") {
         await prisma.notification.create({
           data: {
             userId: newFreelancerId,
@@ -260,6 +275,7 @@ const reassignOrder = (io) =>
       res.status(500).json({ message: "Server error" });
     }
   });
+
 module.exports = {
   assignOrder,
   getAssignedOrders,

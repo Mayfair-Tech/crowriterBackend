@@ -46,15 +46,15 @@ io.on("connection", async (socket) => {
       socket.emit("unreadNotifications", unreadNotifications);
 
       // Optionally mark notifications as read after sending
-      await prisma.notification.updateMany({
-        where: {
-          userId: userId,
-          read: false,
-        },
-        data: {
-          read: true,
-        },
-      });
+      // await prisma.notification.updateMany({
+      //   where: {
+      //     userId: userId,
+      //     read: false,
+      //   },
+      //   data: {
+      //     read: true,
+      //   },
+      // });
     } catch (error) {
       console.error("Error fetching unread notifications:", error);
       console.log("there was an error reading unread notifications");
