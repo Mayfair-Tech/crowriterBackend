@@ -52,7 +52,12 @@ module.exports = (io) => {
   router.post(
     "/create",
     upload.single("attachment"),
-    orderController.createOrder
+    (req, res, next) => {
+      // Inject io instance into the request object
+      req.io = req.app.get("io");
+      next();
+    },
+    orderController.createOrder(io)
   );
 
   /**
@@ -262,7 +267,12 @@ module.exports = (io) => {
    */
   router.patch(
     "/extend-deadline/:orderId",
-    assignmentController.extendDeadline
+    (req, res, next) => {
+      // Inject io instance into the request object
+      req.io = req.app.get("io");
+      next();
+    },
+    assignmentController.extendDeadline(io)
   );
 
   /**
