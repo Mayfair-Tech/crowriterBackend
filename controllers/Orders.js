@@ -55,22 +55,47 @@ const createOrder = (io) =>
           },
         });
 
-        // Emit real-time notification
+        // Emit real-time notification to the specific freelancer
         emitNotification(io, freelancerId, {
           title: "New Order Assigned",
           message: `You have been assigned a new order with ID ${order.id}`,
         });
       } else {
         order = await prisma.order.create({ data: orderData });
+
+        // Fetch all freelancers
+        const freelancers = await prisma.user.findMany({
+          where: { role: "freelancer" },
+        });
+
+        // Notify all freelancers about the new order
+        const notifications = freelancers.map(async (freelancer) => {
+          await prisma.notification.create({
+            data: {
+              userId: freelancer.id,
+              title: "New Order Available",
+              message: `A new order with ID ${order.id} has been created.`,
+              type: "ORDER",
+              read: false,
+            },
+          });
+
+          // Emit real-time notification to each freelancer
+          emitNotification(io, freelancer.id, {
+            title: "New Order Available",
+            message: `A new order with ID ${order.id} has been created.`,
+          });
+        });
+
+        // Wait for all notifications to be sent
+        await Promise.all(notifications);
       }
 
-      res
-        .status(201)
-        .json({
-          success: true,
-          data: order,
-          message: "Order created successfully",
-        });
+      res.status(201).json({
+        success: true,
+        data: order,
+        message: "Order created successfully",
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, message: "Server error" });
@@ -153,13 +178,11 @@ const updateOrder = asyncHandler(async (req, res) => {
       data: updateOrderData,
     });
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        data: updatedOrder,
-        message: "Order updated successfully",
-      });
+    res.status(200).json({
+      success: true,
+      data: updatedOrder,
+      message: "Order updated successfully",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -225,13 +248,11 @@ const deleteOrder = asyncHandler(async (req, res) => {
       });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        data: deletedOrder,
-        message: "Order deleted successfully",
-      });
+    res.status(200).json({
+      success: true,
+      data: deletedOrder,
+      message: "Order deleted successfully",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });

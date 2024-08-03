@@ -46,6 +46,7 @@ io.on("connection", async (socket) => {
       socket.emit("unreadNotifications", unreadNotifications);
 
       // Optionally mark notifications as read after sending
+
       // await prisma.notification.updateMany({
       //   where: {
       //     userId: userId,
