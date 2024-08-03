@@ -2529,3 +2529,14 @@ The `select` statement for type User needs at least one truthy value.	GET	/users
 20240724	12:22:18	3903af56-f03d-4e32-b1af-3842ae03f76b	Error: Not allowed by CORS	GET	/socket.io/?userId=58fcbebe-7368-455e-a158-20a08d86ed85&EIO=4&transport=polling&t=P3a36qo	http://localhost:5173
 20240724	12:22:19	6655e4cd-a4b0-4c8b-8401-9c3fe0b7b5a6	Error: Not allowed by CORS	GET	/socket.io/?userId=58fcbebe-7368-455e-a158-20a08d86ed85&EIO=4&transport=polling&t=P3a374Q	http://localhost:5173
 20240724	12:22:20	97c21f5a-a108-447f-a42b-cfaba2b9b129	Error: Not allowed by CORS	GET	/socket.io/?userId=58fcbebe-7368-455e-a158-20a08d86ed85&EIO=4&transport=polling&t=P3a37K2	http://localhost:5173
+20240803	21:13:41	16e7e7dd-f357-4833-9df7-993fc1ea16ca	PrismaClientInitializationError: 
+Invalid `prisma.order.findUnique()` invocation in
+/home/jonny/mercy-work/crowriter/server/controllers/CancelledJobs.js:57:36
+
+  54 const changeStatus = asyncHandler(async (req, res) => {
+  55   const { orderId, newStatus } = req.body; // Added newStatus to request body
+  56 
+→ 57   const order = await prisma.order.findUnique(
+Can't reach database server at `roundhouse.proxy.rlwy.net:54383`
+
+Please make sure your database server is running at `roundhouse.proxy.rlwy.net:54383`.	PATCH	/orders/cancel	http://localhost:5173
